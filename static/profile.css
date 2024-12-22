@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600;700;800&display=swap');
+
+:root {
+    --primary: rgb(254, 48, 114);
+    --secondary: rgb(255, 255, 255);
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-size: 62.5%;
+}
+
+* {
+    font-family: 'Readex Pro', sans-serif;
+}
+
+.heading {
+    font-size: 1.6rem;
+}
+
+label {
+    font-size: 1.6rem;
+}
+
+h2 {
+    font-style: italic;
+}
+
+.btn {
+    transition: all .25s;
+    padding: 1.8rem 4.5rem;
+    border-radius: 3rem;
+    border: none;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.btn--primary {
+    color: var(--secondary);
+    background-color: var(--primary);
+}
+
+.btn--primary:hover {
+    color: var(--primary);
+    background-color: var(--secondary);
+}
+
+.btn--secondary {
+    color: var(--primary);
+    background-color: var(--secondary);
+    border: 0.2rem solid var(--primary);
+    margin: 1rem;
+}
+
+.btn--secondary:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+/*-------- Navbar --------*/
+
+nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 .4rem 2rem -.2rem gray;
+}
+
+nav .logo-container {
+    width: 17rem;
+    margin: 1.5rem;
+}
+
+nav .logo-container .logo {
+    width: 100%;
+}
+
+.onboarding {
+    margin-top: 5rem;
+}
+
+.onboarding form {
+    display: flex;
+    justify-content: center;
+}
+
+.onboarding form .form-columns {
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+    gap: 2rem; /* Add gap between columns */
+}
+
+.onboarding form section {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    width: 45%;
+    text-align: start;
+    box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.onboarding form input,
+.onboarding form select,
+.onboarding form textarea {
+    width: 100%;
+    padding: 1.5rem 3rem;
+    margin: 1rem 0;
+    font-size: 1.5rem;
+    border: solid 0.2rem rgb(219, 219, 219);
+    border-radius: 1rem;
+}
+
+.onboarding form label {
+    margin: 1rem 0;
+}
+
+.onboarding form .multiple-input-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.onboarding form input::-webkit-outer-spin-button,
+.onboarding form input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.onboarding form .multiple-input-container input {
+    margin-right: 1rem;
+}
+
+.onboarding form .multiple-input-container label {
+    padding: 1rem;
+    border: solid 0.2rem rgb(144, 144, 144);
+    border-radius: 1rem;
+    transition: all 0.3s;
+    margin-right: 1rem;
+}
+
+.onboarding form input[type=radio] {
+    display: none;
+}
+
+.onboarding form input[type=radio] + label {
+    cursor: pointer;
+}
+
+.onboarding form input[type=number] {
+    width: 10%;
+}
+
+.onboarding form input[type=radio]:checked + label {
+    border: solid 0.2rem rgb(221, 39, 22);
+}
+
+.onboarding form input[type=submit]:hover {
+    background-color: rgb(235, 235, 235);
+}
+
+.onboarding form input[type=submit]:active {
+    background-color: rgb(226, 115, 115);
+}
+
+.onboarding form .photo-container img {
+    width: 100%;
+}
+
+.interest-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.interest {
+    font-size: 1.6rem;
+    border: solid 0.2rem rgb(144, 144, 144);
+    display: inline-block;
+    border-radius: 1rem;
+    transition: all 0.3s;
+    padding: 1rem;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+}
+
+.interest__active {
+    border: solid 0.2rem rgb(221, 39, 22);
+    background-color: var(--primary);
+    color: var(--secondary);
+}
+
+/*-------- Flash Messages --------*/
+
+.alert {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0.5rem;
+    font-size: 1.4rem;
+    text-align: left;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}

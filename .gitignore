@@ -1,0 +1,5 @@
+KEYS/
+.env
+__pycache__/
+tanzeel/
+static/profile_photos/

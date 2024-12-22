@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tinder</title>
+    <link rel="stylesheet" href="../static/base.css"></link>
+</head>
+<body>
+    
+    {% block content %}{% endblock %}
+    {% block login_modal %}{% endblock %}
+
+    <div class="overlay">
+        <nav>
+          <div class="logo-container">
+            <img
+              class="logo"
+              src="../static/tinder_logo_white.png"
+              alt="logo"
+            />
+            <button class="btn btn--secondary btn--login" onclick="go_to_login_page()">
+                Log in
+              </button>
+        </div>
+        </nav>
+        <div class="home">
+          <h1 class="primary-title">Match Making App</h1>
+          <h1 class="primary-title">Tinder®</h1>
+          <div class="button-container">
+            <button class="btn btn--primary btn--signup" onclick="go_to_signup_page()">
+              Create Account
+            </button>
+          </div>
+        </div>
+      </div>
+      
+</body>
+
+<script>
+    function go_to_login_page() {
+        window.location.href = "../login";
+    }
+
+    function go_to_signup_page() {
+        window.location.href = "../register";
+    }
+</script>
+
+</html>

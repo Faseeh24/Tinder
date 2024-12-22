@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>{{ user.username }}'s Profile</h1>
+    {% if profile %}
+        {% if profile.name %} <p>Name: {{ profile.name }}</p> {% endif %}
+        {% if profile.age %} <p>Age: {{ profile.age }}</p> {% endif %}
+        {% if profile.location %} <p>Location: {{ profile.location }}</p> {% endif %}
+        {% if profile.interests %} <p>Interests: {{ profile.interests }}</p> {% endif %}
+        {% if profile.bio %} <p>Bio: {{ profile.bio }}</p> {% endif %}
+    {% else %}
+        <p>This user has not set up a profile yet.</p>
+    {% endif %}
+</body>
+</html>   
+   

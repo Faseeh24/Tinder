@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="../static/profile.css">
+</head>
+<body>
+<div id="root">
+    <nav>
+        <div class="logo-container">
+            <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
+        </div>
+    </nav>
+
+    <div class="onboarding">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            {{ form.selected_interests }}
+            <div class="form-columns">
+                <section>
+                    <label for="name">{{ form.name.label }}</label>
+                    {{ form.name(class="form-control") }}
+
+                    <label for="date_of_birth">{{ form.date_of_birth.label }}</label>
+                    {{ form.date_of_birth(class="form-control") }}
+
+                    <label for="gender">{{ form.gender.label }}</label>
+                    <div class="multiple-input-container">
+                        {{ form.gender }}
+                    </div>
+
+                    <label for="match_preference">{{ form.match_preference.label }}</label>
+                    <div class="multiple-input-container">
+                        {{ form.match_preference }}
+                    </div>
+
+                    <label for="profession">{{ form.profession.label }}</label>
+                    {{ form.profession(class="form-control") }}
+
+                    <label for="education_level">{{ form.education_level.label }}</label>
+                    {{ form.education_level(class="form-control") }}
+                </section>
+                <section>
+                    <label for="profile_photo">{{ form.profile_photo.label }}</label>
+                    {{ form.profile_photo(class="form-control") }}
+                    
+                    <label for="location">{{ form.location.label }}</label>
+                    {{ form.location(class="form-control") }}
+
+                    <label for="about_me">{{ form.about_me.label }}</label>
+                    {{ form.about_me(class="form-control") }}
+
+                    <label for="interests">{{ form.interests.label }}</label>
+                    <div class="interest-container">
+                        {% for subfield in form.interests %}
+                            <div class="interest" onclick="toggleInterest(this)">
+                                {{ subfield.label.text }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {{ form.submit(class="btn btn--secondary") }}
+                </section>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleInterest(element) {
+        element.classList.toggle('interest__active');
+        updateSelectedInterests();
+    }
+
+    function updateSelectedInterests() {
+        const selectedInterests = Array.from(document.querySelectorAll('.interest__active'))
+            .map(interest => interest.textContent.trim())
+            .join(',');
+        document.querySelector('input[name="selected_interests"]').value = selectedInterests;
+    }
+</script>
+</body>
+</html>
