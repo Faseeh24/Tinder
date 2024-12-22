@@ -1,50 +1,72 @@
-from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+from thefuzz import fuzz, process
+from datetime import datetime
+from sklearn.preprocessing import StandardScaler
 
-def calculate_similarity_sklearn(profile1, profile2):
-    # Convert profile data to numerical vectors (feature engineering is key here)
+all_possible_interests = ['Sports', 'Music', 'Travel', 'Reading', 'Movies', 'Cooking', 'Fitness', 'Gaming', 'Art', 'Technology', 'Fashion', 'Photography']
+
+def calculate_age(date_of_birth_str):
+    try:
+        date_of_birth = datetime.strptime(date_of_birth_str, "%Y-%m-%d").date()
+        today = datetime.now().date()
+        age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+        return age
+    except (ValueError, TypeError):  # Handle invalid date or None
+        return None
+
+def calculate_similarity(profile1, profile2):
+    if not profile1 or not profile2: # Check for empty profiles
+        return 0
+
     def profile_to_vector(profile):
         interests = profile.get('interests', '').lower().split(',')
         interests = [i.strip() for i in interests if i.strip()]
-        interest_vector = [1 if interest in interests else 0 for interest in all_possible_interests] #all_possible_interests should be a list of all possible interests
-        age = profile.get('age', 0)
-        location_vector = [1 if profile.get('location', '').lower() == loc.lower() else 0 for loc in all_possible_locations] #all_possible_locations should be a list of all possible locations
-
-        return np.array(interest_vector + [age] + location_vector)
+        interest_vector = [1 if interest in all_possible_interests else 0 for interest in all_possible_interests]
+        age = calculate_age(profile.get('date_of_birth'))
+        return np.array(interest_vector + ([age] if age is not None else [0])) # Handle missing age
 
     vector1 = profile_to_vector(profile1)
     vector2 = profile_to_vector(profile2)
 
-    similarity = cosine_similarity(vector1.reshape(1, -1), vector2.reshape(1, -1))[0][0]
-    return similarity
+    #Handle cases where one or both vectors are all zeros (no interests and invalid age)
+    if np.all(vector1 == 0) or np.all(vector2 == 0):
+        interest_similarity = 0
+    else:
+        interest_similarity = cosine_similarity(vector1.reshape(1, -1), vector2.reshape(1, -1))[0][0]
 
-# Example usage (needs all_possible_interests and all_possible_locations defined)
-all_possible_interests = ['reading', 'hiking', 'cooking', 'travel', 'photography', 'art', 'music', 'history', 'surfing', 'skateboarding', 'beach volleyball', 'rock climbing', 'camping']
-all_possible_locations = ['New York City', 'New York', 'Los Angeles', 'London', 'San Francisco']
+    age1 = calculate_age(profile1.get('date_of_birth'))
+    age2 = calculate_age(profile2.get('date_of_birth'))
 
-profile_a = { 'name': 'Alice', 'age': 30, 'location': 'New York City', 'interests': 'reading, hiking, cooking, travel, photography, art', }
-profile_b = { 'name': 'Bob', 'age': 32, 'location': 'New York', 'interests': 'travel, photography, cooking, music, history', }
+    if age1 is not None and age2 is not None:
+        age_similarity = 1 - abs(age1 - age2) / 100 # Original method
+    else:
+        age_similarity = 0
 
-similarity_score = calculate_similarity_sklearn(profile_a, profile_b)
-print(f"Similarity using scikit-learn: {similarity_score}")
+    location_similarity = fuzz.ratio(profile1.get('location', '').lower(), profile2.get('location', '').lower()) / 100
+    about_me_similarity = fuzz.token_set_ratio(profile1.get('about_me', '').lower(), profile2.get('about_me', '').lower()) / 100 # Improved fuzzy matching
 
+    # Profession Similarity (Example)
+    profession_similarity = fuzz.ratio(profile1.get('profession', '').lower(), profile2.get('profession', '').lower())/100
 
-# import spacy
+    # Education Similarity
+    education_similarity = 1 if profile1.get('education_level').lower() == profile2.get('education_level').lower() else 0
 
-# nlp = spacy.load("en_core_web_lg") # Load a larger spaCy model for better accuracy
+    weights = { # Adjust weights as needed
+        "interests": 0.3,
+        "age": 0.2,
+        "location": 0.1,
+        "about_me": 0.2,
+        "profession": 0.1,
+        "education": 0.1
+    }
 
-# def bio_similarity(bio1, bio2):
-#     doc1 = nlp(bio1)
-#     doc2 = nlp(bio2)
-#     return doc1.similarity(doc2)
-
-# bio1 = "I enjoy long walks on the beach and reading classic novels."
-# bio2 = "I like to read books and take strolls by the ocean."
-
-# similarity = bio_similarity(bio1, bio2)
-# print(f"Bio similarity: {similarity}")
-
-
-# For numerical data and finding similar vectors, scikit-learn's cosine_similarity or nearest neighbors are excellent.
-# For fuzzy string matching, TheFuzz is the best choice.
-# For more complex text comparisons using semantic meaning, SpaCy is a powerful tool.
+    total_similarity = (
+        weights["interests"] * interest_similarity +
+        weights["age"] * age_similarity +
+        weights["location"] * location_similarity +
+        weights["about_me"] * about_me_similarity +
+        weights["profession"] * profession_similarity +
+        weights["education"] * education_similarity
+    )
+    return total_similarity

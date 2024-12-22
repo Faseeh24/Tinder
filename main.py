@@ -3,12 +3,15 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import RegistrationForm, LoginForm, ProfileForm
 from firebase_admin import credentials, firestore
+from matching import calculate_similarity
 from dotenv import load_dotenv
 from datetime import datetime
 from models import User
 from PIL import Image
 import firebase_admin
 import os
+
+
 
 app = Flask(__name__)
 load_dotenv()
@@ -73,10 +76,36 @@ def login():
         flash('Invalid email or password', 'danger')
     return render_template('login.html', form=form)
 
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', name=current_user.username)
+    current_profile_ref = db.collection('profiles').document(current_user.id)
+    current_profile = current_profile_ref.get().to_dict() if current_profile_ref.get().exists else {}
+
+    # Fetch all profiles
+    profiles_ref = db.collection('profiles').stream()
+    profiles = []
+    for profile in profiles_ref:
+        profile_data = profile.to_dict()
+        user_ref = db.collection('users').document(profile.id).get()
+        if user_ref.exists:
+            user_data = user_ref.to_dict()
+            profile_data['username'] = user_data.get('username')
+            profile_data['email'] = user_data.get('email')
+        profiles.append(profile_data)
+
+    # Suggest profiles based on similarity score
+    suggested_users = []
+    for profile in profiles:
+        similarity_score = calculate_similarity(current_profile, profile)
+        profile['similarity_score'] = similarity_score
+        suggested_users.append(profile)
+
+    # Sort profiles by similarity score in descending order
+    suggested_users = sorted(suggested_users, key=lambda x: x['similarity_score'], reverse=True)
+
+    return render_template('dashboard.html', name=current_user.username, suggested_users=suggested_users)
 
 @app.route('/logout')
 @login_required
@@ -98,7 +127,6 @@ def profile():
             'name': form.name.data,
             'date_of_birth': form.date_of_birth.data.isoformat() if form.date_of_birth.data else None,
             'gender': form.gender.data,
-            'match_preference': form.match_preference.data,
             'profession': form.profession.data,
             'education_level': form.education_level.data,
             'location': form.location.data,
@@ -110,7 +138,7 @@ def profile():
         if profile_photo:
             if not os.path.exists(app.config['UPLOAD_FOLDER']):
                 os.makedirs(app.config['UPLOAD_FOLDER'])
-            output_size = (200, 200)
+            output_size = (300, 300)
             img = Image.open(profile_photo)
             img.thumbnail(output_size)
             img.save(os.path.join(app.config['UPLOAD_FOLDER'], (current_user.email + ".png")))

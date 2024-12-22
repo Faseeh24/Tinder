@@ -18,8 +18,7 @@ class LoginForm(FlaskForm):
 class ProfileForm(FlaskForm):
     name = StringField('Name', validators=[Optional(), Length(max=100)])
     date_of_birth = DateField('Date of Birth', format='%Y-%m-%d', validators=[Optional()])
-    gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')], validators=[Optional()])
-    match_preference = SelectField('Match Preference', choices=[('male', 'Male'), ('female', 'Female'), ('both', 'Both')], validators=[Optional()])
+    gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female')], validators=[Optional()])
     profession = StringField('Profession', validators=[Optional(), Length(max=100)])
     education_level = StringField('Education Level', validators=[Optional(), Length(max=100)])
     location = StringField('Location', validators=[Optional(), Length(max=100)])

@@ -1,11 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tinder</title>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../static/dashboard.css">
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <p>Welcome, {{ name }}!</p>
-    <a href="{{ url_for('logout') }}">Logout</a>
+<nav>
+    <div class="logo-container">
+        <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
+    </div>
+</nav>
+
+<div class="cards_list">
+    {% for user in suggested_users %}
+    <div class="card">
+        <div class="img_container">
+            <img src="../static/profile_photos/{{ user.email }}.png" onerror="this.onerror=null;this.src='../static/default_profile_photo.png';" alt="Profile Picture">
+        </div>
+        <p class="pad_sm"><b>Name</b>: {{ user.name }}</p>
+        <p class="pad_sm"><b>Username</b>: {{ user.username }}</p>
+        <p class="pad_sm"><b>Gender</b>: {{ user.gender }}</p>
+        <button class="btn btn--secondary" onclick="window.location.href='/user/{{user.username}}'">View Profile</button>
+        <button class="btn btn--primary">Message</button>
+    </div>
+    {% endfor %}
+</div>
 </body>
 </html>

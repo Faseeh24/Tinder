@@ -39,23 +39,18 @@
                         {{ form.gender }}
                     </div>
 
-                    <label for="match_preference">{{ form.match_preference.label }}</label>
-                    <div class="multiple-input-container">
-                        {{ form.match_preference }}
-                    </div>
-
                     <label for="profession">{{ form.profession.label }}</label>
                     {{ form.profession(class="form-control") }}
 
                     <label for="education_level">{{ form.education_level.label }}</label>
                     {{ form.education_level(class="form-control") }}
+
+                    <label for="location">{{ form.location.label }}</label>
+                    {{ form.location(class="form-control") }}
                 </section>
                 <section>
                     <label for="profile_photo">{{ form.profile_photo.label }}</label>
                     {{ form.profile_photo(class="form-control") }}
-                    
-                    <label for="location">{{ form.location.label }}</label>
-                    {{ form.location(class="form-control") }}
 
                     <label for="about_me">{{ form.about_me.label }}</label>
                     {{ form.about_me(class="form-control") }}

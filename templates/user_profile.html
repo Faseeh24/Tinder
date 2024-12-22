@@ -2,19 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User Profile</title>
+    <title>{{ user.username }}'s Profile</title>
+    <link rel="stylesheet" href="../static/user_profile.css">
 </head>
 <body>
-    <h1>{{ user.username }}'s Profile</h1>
-    {% if profile %}
-        {% if profile.name %} <p>Name: {{ profile.name }}</p> {% endif %}
-        {% if profile.age %} <p>Age: {{ profile.age }}</p> {% endif %}
-        {% if profile.location %} <p>Location: {{ profile.location }}</p> {% endif %}
-        {% if profile.interests %} <p>Interests: {{ profile.interests }}</p> {% endif %}
-        {% if profile.bio %} <p>Bio: {{ profile.bio }}</p> {% endif %}
-    {% else %}
-        <p>This user has not set up a profile yet.</p>
-    {% endif %}
+
+<nav>
+    <div class="logo-container">
+        <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
+    </div>
+</nav>
+
+<section class="profile-section">
+    <div class="container">
+        <div class="left-content">
+            <h1>Details</h1>
+            {% if profile %}
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                {% if profile.name %} <p><strong>Name:</strong> {{ profile.name }}</p> {% endif %}
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                {% if profile.date_of_birth %} <p><strong>Date of Birth:</strong> {{ profile.date_of_birth }}</p> {% endif %}
+                {% if profile.gender %} <p><strong>Gender:</strong> {{ profile.gender }}</p> {% endif %}
+                {% if profile.profession %} <p><strong>Profession:</strong> {{ profile.profession }}</p> {% endif %}
+                {% if profile.education_level %} <p><strong>Education Level:</strong> {{ profile.education_level }}</p> {% endif %}
+                {% if profile.location %} <p><strong>Location:</strong> {{ profile.location }}</p> {% endif %}
+                {% if profile.interests %} <p><strong>Interests:</strong> {{ profile.interests | join(', ') }}</p> {% endif %}
+            {% else %}
+                <p>This user has not set up a profile yet.</p>
+            {% endif %}
+        </div>
+        <div class="right-content">
+            <div class="image-container">
+                <img src="../static/profile_photos/{{ user.email }}.png" onerror="this.onerror=null;this.src='../static/default_profile_photo.png';" alt="Profile Picture">
+            </div>
+            <h3>We are finding your match, {{ user.username }}!</h3>
+            {% if profile.about_me %} <p><strong>About Me:</strong> {{ profile.about_me }}</p> {% endif %}
+            <p>Lorem ipsum dolor sit amet, consectetur dolore dolorem ea enim in ipsa officiis quam qui ratione rem repellat similique, sunt ullam.</p>
+        </div>
+    </div>
+</section>
+
 </body>
-</html>   
-   
+</html>
