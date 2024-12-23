@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Profiles</title>
+    <link rel="stylesheet" href="../static/dashboard.css">
+</head>
+<body>
+<nav>
+    <div class="logo-container">
+        <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
+    </div>
+</nav>
+
+<div class="search-container">
+    <form method="GET" action="{{ url_for('search') }}">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" class="form-control">
+                <option value="">Any</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" class="form-control">
+        </div>
+        <button type="submit" class="btn btn--primary">Search</button>
+    </form>
+</div>
+
+<div class="cards_list">
+    {% for user in search_results %}
+    <div class="card">
+        <div class="img_container">
+            <img src="../static/profile_photos/{{ user.email }}.png" onerror="this.onerror=null;this.src='../static/default_profile_photo.png';" alt="Profile Picture">
+        </div>
+        <p class="pad_sm"><b>Name</b>: {{ user.name }}</p>
+        <p class="pad_sm"><b>Username</b>: {{ user.username }}</p>
+        <p class="pad_sm"><b>Gender</b>: {{ user.gender }}</p>
+        <button class="btn btn--secondary" onclick="window.location.href='/user/{{user.username}}'">View Profile</button>
+        <button class="btn btn--primary">Message</button>
+    </div>
+    {% endfor %}
+</div>
+</body>
+</html>

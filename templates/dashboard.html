@@ -22,7 +22,7 @@
         <p class="pad_sm"><b>Username</b>: {{ user.username }}</p>
         <p class="pad_sm"><b>Gender</b>: {{ user.gender }}</p>
         <button class="btn btn--secondary" onclick="window.location.href='/user/{{user.username}}'">View Profile</button>
-        <button class="btn btn--primary">Message</button>
+        <button class="btn btn--primary" onclick="window.location.href='/chat/{{user.username}}'">Message</button>
     </div>
     {% endfor %}
 </div>

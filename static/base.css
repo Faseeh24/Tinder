@@ -221,9 +221,9 @@ nav .logo-container .btn--login {
     justify-content: space-between;
 }
 
-.auth-modal .btn--close {
+/* .auth-modal .btn--close {
     transform: translateX(3.8rem);
-}
+} */
 
 .auth-modal .btn--tertiary {
     margin-bottom: 3.5rem;

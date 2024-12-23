@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import RegistrationForm, LoginForm, ProfileForm
@@ -10,10 +10,10 @@ from models import User
 from PIL import Image
 import firebase_admin
 import os
-
-
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 load_dotenv()
 app.config['SECRET_KEY'] = os.getenv('flask_secret_key')
 app.config['UPLOAD_FOLDER'] = "static/profile_photos"
@@ -76,7 +76,6 @@ def login():
         flash('Invalid email or password', 'danger')
     return render_template('login.html', form=form)
 
-
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -87,6 +86,8 @@ def dashboard():
     profiles_ref = db.collection('profiles').stream()
     profiles = []
     for profile in profiles_ref:
+        if profile.id == current_user.id:
+            continue
         profile_data = profile.to_dict()
         user_ref = db.collection('users').document(profile.id).get()
         if user_ref.exists:
@@ -106,6 +107,130 @@ def dashboard():
     suggested_users = sorted(suggested_users, key=lambda x: x['similarity_score'], reverse=True)
 
     return render_template('dashboard.html', name=current_user.username, suggested_users=suggested_users)
+
+@app.route('/search', methods=['GET', 'POST'])
+@login_required
+def search():
+    name = request.args.get('name')
+    gender = request.args.get('gender')
+    location = request.args.get('location')
+    interests = request.args.get('interests')
+
+    # Fetch all profiles
+    profiles_ref = db.collection('profiles').stream()
+    profiles = []
+    for profile in profiles_ref:
+        profile_data = profile.to_dict()
+        user_ref = db.collection('users').document(profile.id).get()
+        if user_ref.exists:
+            user_data = user_ref.to_dict()
+            profile_data['username'] = user_data.get('username')
+            profile_data['email'] = user_data.get('email')
+        profiles.append(profile_data)
+
+    # Filter profiles based on search criteria
+    search_results = []
+    for profile in profiles:
+        if name and name.lower() not in profile.get('name', '').lower():
+            continue
+        if gender and gender.lower() != profile.get('gender', '').lower():
+            continue
+        if location and location.lower() not in profile.get('location', '').lower():
+            continue
+        if interests:
+            profile_interests = profile.get('interests', '').lower().split(',')
+            search_interests = interests.lower().split(',')
+            if not any(interest.strip() in profile_interests for interest in search_interests):
+                continue
+        search_results.append(profile)
+
+    return render_template('search.html', search_results=search_results)
+
+@app.route('/chat')
+@login_required
+def chat():
+    # Fetch users with whom the current user has previous chats
+    chats_ref = db.collection('chats').where('participants', 'array_contains', current_user.id).stream()
+    chat_users = set()
+    for chat in chats_ref:
+        chat_data = chat.to_dict()
+        for participant in chat_data['participants']:
+            if participant != current_user.id:
+                user_ref = db.collection('users').document(participant).get()
+                if user_ref.exists:
+                    chat_users.add(user_ref.to_dict())
+    return render_template('chat.html', chat_users=chat_users)
+
+@app.route('/chat/<username>')
+@login_required
+def chat_with_user(username):
+    user_ref = db.collection('users').where('username', '==', username).get()
+    if len(user_ref) == 0:
+        return render_template('404.html'), 404
+    other_user_data = user_ref[0].to_dict()
+    other_user_id = user_ref[0].id
+    chat_id = '_'.join(sorted([current_user.username, username]))
+    
+    try:
+        messages_ref = db.collection('chats').document(chat_id).collection('messages').order_by('timestamp').stream()
+        messages = [message.to_dict() for message in messages_ref]
+    except Exception as e:
+        app.logger.error(f"Error fetching messages: {e}")
+        messages = []
+    return render_template('chat.html', receiver=other_user_data, messages=messages)
+
+# @app.route('/chat/<username>')
+# @login_required
+# def chat_with_user(username):
+#     user_ref = db.collection('users').where('username', '==', username).get()
+#     if not user_ref:
+#         return render_template('404.html'), 404
+#     other_user_data = user_ref[0].to_dict()
+#     other_user_id = user_ref[0].id
+#     chat_id = '_'.join(sorted([current_user.username, username]))
+#     messages_ref = db.collection('chats').document(chat_id).collection('messages').order_by('timestamp').stream()
+#     messages = [message.to_dict() for message in messages_ref]
+#     return render_template('chat.html', receiver=other_user_data, messages=messages)
+
+@app.route('/get_old_messages/<username>')
+@login_required
+def get_old_messages(username):
+    user_ref = db.collection('users').where('username', '==', username).get()
+    if not user_ref:
+        return jsonify({'error': 'User not found'}), 404
+    other_user_id = user_ref[0].id
+    chat_id = '_'.join(sorted([current_user.username, username]))
+    messages_ref = db.collection('chats').document(chat_id).collection('messages').order_by('timestamp').stream()
+    messages = [message.to_dict() for message in messages_ref]
+    return jsonify(messages)
+
+@socketio.on('join')
+def on_join(data):
+    username = data['username']
+    room = data['room']
+    join_room(room)
+    emit('message', {'msg': f"{username} has joined the room."}, room=room)
+
+@socketio.on('leave')
+def on_leave(data):
+    username = data['username']
+    room = data['room']
+    leave_room(room)
+    emit('message', {'msg': f"{username} has left the room."}, room=room)
+
+@socketio.on('send_message')
+def handle_send_message_event(data):
+    app.logger.info(f"Received message data: {data}")
+    chat_id = data['room']
+    message_data = {
+        'sender_id': current_user.id,
+        'receiver_id': data['receiver_id'],
+        'message_text': data['message'],
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    app.logger.info(f"Storing message data: {message_data}")
+    db.collection('chats').document(chat_id).collection('messages').add(message_data)
+    emit('receive_message', message_data, room=chat_id)
 
 @app.route('/logout')
 @login_required
@@ -168,4 +293,4 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)

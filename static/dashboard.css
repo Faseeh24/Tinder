@@ -28,6 +28,34 @@ nav .logo-container .logo {
     width: 100%;
 }
 
+.search-container {
+    max-width: 120rem;
+    padding: 2rem;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 1rem;
+    box-shadow: 0 0.2rem 0.4rem var(--primary);
+}
+
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-group label {
+    font-size: 2rem;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.6rem;
+    border: 0.1rem solid #ccc;
+    border-radius: 0.5rem;
+}
+
 .cards_list {
     display: flex;
     flex-wrap: wrap;

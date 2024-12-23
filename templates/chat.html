@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" integrity="sha512-MJrLq3zSKlA/o/Vt/lrxYyP+0cSI4Y1m1X6Fv7/E+Scb8Z/TqlD3qQj+9hTg5l9/y/qWq2s0r+9j3s92/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <nav>
+        <img src="{{ url_for('static', filename='tinder_logo_white.png') }}" alt="Logo" class="logo">
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </nav>
+    <div id="chat-container">
+        <div id="chat-header">
+            <h2>Chat with <span id="chat-with">{{ receiver.username }}</span></h2>
+        </div>
+        <div id="chat-messages">
+            {% for message in messages %}
+                <div class="message {{ 'sender' if message.sender_id == current_user.id else 'receiver' }}">
+                    <p>{{ message.message_text }}</p>
+                    <span>{{ message.timestamp }}</span>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="chat-input">
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button id="send-button" style="position: relative; z-index: 1;">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        const chatMessages = document.getElementById('chat-messages');
+        // const currentRoom = `{{ current_user.username }}_{{ receiver.username }}`;
+        const currentUserUsername = '{{ current_user.username }}';
+        const receiverUsername = '{{ receiver.username }}';
+        const usernames = [currentUserUsername, receiverUsername].sort();
+        const currentRoom = usernames.join('_');
+        socket.emit('join', { username: '{{ current_user.username }}', room: currentRoom });
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            if (message.trim() !== '') {
+                console.log('Sending message:', message);
+                socket.emit('send_message', {
+                    username: '{{ current_user.username }}',
+                    room: currentRoom,
+                    message: message,
+                    receiver_id: '{{ receiver.id }}'
+                });
+                messageInput.value = '';
+            } else {
+                console.log('Message is empty');
+            }
+        }
+
+        socket.on('receive_message', function(data) {
+            console.log('Received message:', data);
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            if (data.sender_id === '{{ current_user.id }}') {
+                messageElement.classList.add('sender');
+            } else {
+                messageElement.classList.add('receiver');
+            }
+            messageElement.innerHTML = `<p>${data.message_text}</p><span>${data.timestamp}</span>`;
+            chatMessages.appendChild(messageElement);
+        });
+
+        document.getElementById('send-button').addEventListener('click', function() {
+            console.log('Send button clicked');
+            sendMessage();
+        });
+
+        // Load previous messages when the page loads
+        window.onload = function() {
+            const chatWith = document.getElementById('chat-with').innerText;
+            if (chatWith !== 'User') {
+                joinRoom('{{ receiver.id }}', chatWith);
+            }
+        };
+    </script>
+</body>
+</html>
