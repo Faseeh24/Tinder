@@ -1,16 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_socketio import SocketIO, emit, join_room, leave_room
 from forms import RegistrationForm, LoginForm, ProfileForm
 from firebase_admin import credentials, firestore
 from matching import calculate_similarity
+from gmail_smtp import send_sign_up_email
 from dotenv import load_dotenv
 from datetime import datetime
 from models import User
 from PIL import Image
 import firebase_admin
 import os
-from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -35,6 +36,8 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
     return render_template('base.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -54,7 +57,8 @@ def register():
                 'email': user.email,
                 'password_hash': user.password_hash
             })
-            flash('Account created successfully! Please log in.', 'success')
+            send_sign_up_email(user.email)
+            # flash('Account created successfully! Please log in.', 'success')
             return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
@@ -70,7 +74,7 @@ def login():
             user = User(id=user_ref[0].id, **user_data)
             if user.check_password(form.password.data):
                 login_user(user)
-                flash('Login successful!', 'success')
+                # flash('Login successful!', 'success')
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         flash('Invalid email or password', 'danger')
