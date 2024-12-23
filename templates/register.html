@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block login_modal %}
 <div class="auth-modal">
+    <a href="/" class="btn--close">X</a>
     <h1>Register</h1>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -29,7 +30,7 @@
         {% for error in form.confirm_password.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
-        {{ form.submit(class="btn") }}
+        {{ form.submit(class="btn btn--primary") }}
     </form>
 </div>
 {% endblock %}

@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='_basic.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" integrity="sha512-MJrLq3zSKlA/o/Vt/lrxYyP+0cSI4Y1m1X6Fv7/E+Scb8Z/TqlD3qQj+9hTg5l9/y/qWq2s0r+9j3s92/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <nav>
-        <img src="{{ url_for('static', filename='tinder_logo_white.png') }}" alt="Logo" class="logo">
+        <div class="logo-container">
+            <!-- <img src="{{ url_for('static', filename='tinder_logo_white.png') }}" alt="Logo" class="logo"> -->
+            <img src="../static/color-logo-tinder.png" alt="Something" class="logo">
+        </div>
         <div class="nav-links">
             <a href="{{ url_for('dashboard') }}">Dashboard</a>
             <a href="{{ url_for('profile') }}">Profile</a>
             <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="/user/{{current_user.username}}">Me</a>
+            <a href="{{ url_for('search') }}">Search</a>
         </div>
     </nav>
     <div id="chat-container">

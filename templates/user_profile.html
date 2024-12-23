@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ user.username }}'s Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='_basic.css') }}">
     <link rel="stylesheet" href="../static/user_profile.css">
 </head>
 <body>
@@ -10,6 +11,13 @@
 <nav>
     <div class="logo-container">
         <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
+    </div>
+    <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="/user/{{current_user.username}}">Me</a>
+            <a href="{{ url_for('search') }}">Search</a>
     </div>
 </nav>
 

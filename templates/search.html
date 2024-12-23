@@ -10,25 +10,30 @@
     <div class="logo-container">
         <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
     </div>
+    <div class="nav-links">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="/user/{{current_user.username}}">Me</a>
+        <a href="{{ url_for('search') }}">Search</a>
+    </div>
 </nav>
 
 <div class="search-container">
     <form method="GET" action="{{ url_for('search') }}">
-        <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="gender">Gender:</label>
-            <select id="gender" name="gender" class="form-control">
-                <option value="">Any</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="location">Location:</label>
-            <input type="text" id="location" name="location" class="form-control">
+        <div class="row">
+            <div class="form-group left">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" class="form-control">
+            </div>
+            <div class="form-group right">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" class="form-control">
+                    <option value="">Any</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
         </div>
         <button type="submit" class="btn btn--primary">Search</button>
     </form>
@@ -44,7 +49,7 @@
         <p class="pad_sm"><b>Username</b>: {{ user.username }}</p>
         <p class="pad_sm"><b>Gender</b>: {{ user.gender }}</p>
         <button class="btn btn--secondary" onclick="window.location.href='/user/{{user.username}}'">View Profile</button>
-        <button class="btn btn--primary">Message</button>
+        <button class="btn btn--primary" onclick="window.location.href='/chat/{{user.username}}'">Message</button>
     </div>
     {% endfor %}
 </div>

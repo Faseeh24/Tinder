@@ -41,6 +41,25 @@ h2 {
     font-size: 1.5rem;
 }
 
+.btn--close {
+    position: absolute;
+    top: 1.5rem;
+    left: 43rem;
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    border-radius: 50%;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: .25rem 1rem;
+    transition: all .25s;
+    text-decoration: none;
+}
+
+.btn--close:hover {
+    background-color: var(--primary);
+    color: var(--secondary);
+}
+
 .btn:hover {
     cursor: pointer;
 }
@@ -48,7 +67,6 @@ h2 {
 .primary-title {
     font-size: 9rem;
     color: var(--secondary);
-
 }
 
 .btn--primary {
@@ -57,8 +75,9 @@ h2 {
 }
 
 .btn--primary:hover {
-    color: var(--primary);
-    background-color: var(--secondary);
+    color: var(--primary) !important;
+    background-color: var(--secondary) !important;
+    border: 1px solid var(--primary) !important;
 }
 
 .btn--secondary {

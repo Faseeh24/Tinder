@@ -124,6 +124,8 @@ def search():
     profiles_ref = db.collection('profiles').stream()
     profiles = []
     for profile in profiles_ref:
+        if profile.id == current_user.id:
+            continue  # Skip the current user's own profile
         profile_data = profile.to_dict()
         user_ref = db.collection('users').document(profile.id).get()
         if user_ref.exists:
