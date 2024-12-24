@@ -12,6 +12,13 @@ from models import User
 from PIL import Image
 import firebase_admin
 import os
+import pandas as pd
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Use the Agg backend for matplotlib
+import matplotlib.pyplot as plt
+import io
+import base64
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -185,19 +192,6 @@ def chat_with_user(username):
         messages = []
     return render_template('chat.html', receiver=other_user_data, messages=messages)
 
-# @app.route('/chat/<username>')
-# @login_required
-# def chat_with_user(username):
-#     user_ref = db.collection('users').where('username', '==', username).get()
-#     if not user_ref:
-#         return render_template('404.html'), 404
-#     other_user_data = user_ref[0].to_dict()
-#     other_user_id = user_ref[0].id
-#     chat_id = '_'.join(sorted([current_user.username, username]))
-#     messages_ref = db.collection('chats').document(chat_id).collection('messages').order_by('timestamp').stream()
-#     messages = [message.to_dict() for message in messages_ref]
-#     return render_template('chat.html', receiver=other_user_data, messages=messages)
-
 @app.route('/get_old_messages/<username>')
 @login_required
 def get_old_messages(username):
@@ -289,6 +283,48 @@ def user_profile(username):
             profile['interests'] = profile['interests'].split(',')  # Convert interests back to a list
         return render_template('user_profile.html', profile=profile, user=user_data)
     return render_template('404.html'), 404
+
+@app.route('/admin')
+@login_required
+def admin():
+    # Restrict access to the admin route
+    if current_user.email != 'faseeh123@gmail.com':
+        return redirect(url_for('dashboard'))
+
+    # Fetch all profiles
+    profiles_ref = db.collection('profiles').stream()
+    profiles = [profile.to_dict() for profile in profiles_ref]
+
+    # Calculate the number of users
+    total_users = len(profiles)
+
+    # Calculate gender distribution
+    gender_counts = pd.DataFrame(profiles)['gender'].value_counts().to_dict()
+    male_count = gender_counts.get('Male', 0)
+    female_count = gender_counts.get('Female', 0)
+
+    # Calculate age distribution
+    df = pd.DataFrame(profiles)
+    if 'date_of_birth' in df.columns:
+        df['date_of_birth'] = pd.to_datetime(df['date_of_birth'], format='%Y-%m-%d', errors='coerce')
+        df['age'] = (pd.Timestamp.now().year - df['date_of_birth'].dt.year)
+        age_distribution = df['age'].dropna().value_counts(bins=10).to_dict()
+
+        # Generate age distribution graph
+        plt.figure(figsize=(10, 6))
+        df['age'].dropna().plot(kind='hist', bins=10, title='Age Distribution')
+        plt.xlabel('Age')
+        plt.ylabel('Frequency')
+        age_img = io.BytesIO()
+        plt.savefig(age_img, format='png')
+        age_img.seek(0)
+        age_base64 = base64.b64encode(age_img.getvalue()).decode('utf8')
+        plt.close()
+    else:
+        age_distribution = {}
+        age_base64 = None
+
+    return render_template('admin.html', total_users=total_users, male_count=male_count, female_count=female_count, age_distribution=age_distribution, age_base64=age_base64)
 
 @app.errorhandler(404)
 def page_not_found(e):

@@ -39,6 +39,7 @@ nav .logo-container .logo {
     flex-direction: column;
     width: 100%;
     margin-top: 5rem;
+    
 }
 
 .search-container .row {
@@ -222,4 +223,51 @@ nav .logo-container .logo {
     border-radius: 1rem;
     transform: scale(1.1);
     box-shadow: 4px 4px 1px var(--primary)
+}
+
+.insight {
+    margin: 20px 0;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.insight h2 {
+    font-size: 24px;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.insight p {
+    font-size: 18px;
+    color: #333;
+}
+
+.insight img {
+    width: 100%;
+    max-width: 600px;
+    display: block;
+    margin: 0 auto;
+}
+
+.admin-container {
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    margin-left: 10%;
+}
+
+.admin-container .top {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.admin-container .top > * {
+    width: 45%;
+}
+
+.admin-container .bottom {
+    margin-top: 0%;
+    padding: 0;
 }

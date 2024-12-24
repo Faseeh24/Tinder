@@ -13,11 +13,11 @@
         <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
     </div>
     <div class="nav-links">
-            <a href="{{ url_for('dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('profile') }}">Profile</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-            <a href="/user/{{current_user.username}}">Me</a>
-            <a href="{{ url_for('search') }}">Search</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="/user/{{current_user.username}}">Me</a>
+        <a href="{{ url_for('search') }}">Search</a>
     </div>
 </nav>
 
@@ -45,7 +45,6 @@
             </div>
             <h3>We are finding your match, {{ user.username }}!</h3>
             {% if profile.about_me %} <p><strong>About Me:</strong> {{ profile.about_me }}</p> {% endif %}
-            <!-- <p>Lorem ipsum dolor sit amet, consectetur dolore dolorem ea enim in ipsa officiis quam qui ratione rem repellat similique, sunt ullam.</p> -->
         </div>
     </div>
 </section>

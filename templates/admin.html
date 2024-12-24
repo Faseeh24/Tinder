@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="logo-container">
+            <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
+        </div>
+        <div class="nav-links">
+            {% if current_user.username == "faseeh123" %}
+            <a href="{{ url_for('admin') }}">Admin</a>
+            {% endif %}
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="/user/{{current_user.username}}">Me</a>
+            <a href="{{ url_for('search') }}">Search</a>
+        </div>
+    </nav>
+    <div class="admin-container">
+        <!-- <h1>Admin Dashboard</h1> -->
+
+        <div class="top">
+            <div class="insight">
+                <h2>Total Profiles</h2>
+                <p>{{ total_users }}</p>
+            </div>
+            <div class="insight">
+                <h2>Gender Distribution</h2>
+                <p>Male: {{ male_count }}</p>
+                <p>Female: {{ female_count }}</p>
+            </div>
+        </div>
+        <div class="bottom insight">
+            <h2>Age Distribution</h2>
+            {% if age_base64 %}
+                <img src="data:image/png;base64,{{ age_base64 }}" alt="Age Distribution">
+            {% else %}
+                <p>No age data available.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

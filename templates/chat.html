@@ -15,6 +15,9 @@
             <img src="../static/color-logo-tinder.png" alt="Something" class="logo">
         </div>
         <div class="nav-links">
+            {% if current_user.username == "faseeh123" %}
+            <a href="{{ url_for('admin') }}">Admin</a>
+            {% endif %}
             <a href="{{ url_for('dashboard') }}">Dashboard</a>
             <a href="{{ url_for('profile') }}">Profile</a>
             <a href="{{ url_for('logout') }}">Logout</a>
