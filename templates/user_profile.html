@@ -45,7 +45,8 @@
             </div>
             <h3>We are finding your match, {{ user.username }}!</h3>
             {% if profile.about_me %} <p><strong>About Me:</strong> {{ profile.about_me }}</p> {% endif %}
-        </div>
+            <button class="btn btn--primary" onclick="window.location.href='/chat/{{user.username}}'">Message</button>
+    </div>
     </div>
 </section>
 

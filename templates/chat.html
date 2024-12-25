@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='_basic.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 </head>
 <body>
     <nav>
@@ -33,7 +34,7 @@
             {% for message in messages %}
                 <div class="message {{ 'sender' if message.sender_id == current_user.id else 'receiver' }}">
                     <p>{{ message.message_text }}</p>
-                    <span>{{ message.timestamp }}</span>
+                    <span class="timestamp" data-timestamp="{{ message.timestamp }}"></span>
                 </div>
             {% endfor %}
         </div>
@@ -79,8 +80,9 @@
             } else {
                 messageElement.classList.add('receiver');
             }
-            messageElement.innerHTML = `<p>${data.message_text}</p><span>${data.timestamp}</span>`;
+            messageElement.innerHTML = `<p>${data.message_text}</p><span class="timestamp" data-timestamp="${data.timestamp}"></span>`;
             chatMessages.appendChild(messageElement);
+            formatTimestamps();
         });
 
         document.getElementById('send-button').addEventListener('click', function() {
@@ -93,6 +95,20 @@
                 sendMessage();
             }
         });
+
+        function formatTimestamps() {
+            const timestamps = document.querySelectorAll('.timestamp');
+            timestamps.forEach(function(timestamp) {
+                const isoString = timestamp.getAttribute('data-timestamp');
+                const formattedTime = moment(isoString).format('MMMM Do YYYY, h:mm:ss a');
+                timestamp.textContent = formattedTime;
+            });
+        }
+
+        // Format timestamps on page load
+        window.onload = function() {
+            formatTimestamps();
+        };
     </script>
 </body>
 </html>
