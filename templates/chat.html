@@ -6,7 +6,7 @@
     <title>Chat</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='_basic.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" integrity="sha512-MJrLq3zSKlA/o/Vt/lrxYyP+0cSI4Y1m1X6Fv7/E+Scb8Z/TqlD3qQj+9hTg5l9/y/qWq2s0r+9j3s92/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <nav>
@@ -88,13 +88,11 @@
             sendMessage();
         });
 
-        // Load previous messages when the page loads
-        window.onload = function() {
-            const chatWith = document.getElementById('chat-with').innerText;
-            if (chatWith !== 'User') {
-                joinRoom('{{ receiver.id }}', chatWith);
+        document.getElementById('message-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
             }
-        };
+        });
     </script>
 </body>
 </html>
