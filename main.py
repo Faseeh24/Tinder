@@ -93,11 +93,16 @@ def dashboard():
     current_profile_ref = db.collection('profiles').document(current_user.id)
     current_profile = current_profile_ref.get().to_dict() if current_profile_ref.get().exists else {}
 
+    # Fetch blocked users
+    block_ref = db.collection('block').document(current_user.id)
+    block_data = block_ref.get().to_dict() if block_ref.get().exists else {'blocked_users': []}
+    blocked_users = block_data['blocked_users']
+
     # Fetch all profiles
     profiles_ref = db.collection('profiles').stream()
     profiles = []
     for profile in profiles_ref:
-        if profile.id == current_user.id:
+        if profile.id == current_user.id or profile.id in blocked_users:
             continue
         profile_data = profile.to_dict()
         user_ref = db.collection('users').document(profile.id).get()
@@ -127,12 +132,17 @@ def search():
     location = request.args.get('location')
     interests = request.args.get('interests')
 
+    # Fetch blocked users
+    block_ref = db.collection('block').document(current_user.id)
+    block_data = block_ref.get().to_dict() if block_ref.get().exists else {'blocked_users': []}
+    blocked_users = block_data['blocked_users']
+
     # Fetch all profiles
     profiles_ref = db.collection('profiles').stream()
     profiles = []
     for profile in profiles_ref:
-        if profile.id == current_user.id:
-            continue  # Skip the current user's own profile
+        if profile.id == current_user.id or profile.id in blocked_users:
+            continue  # Skip the current user's own profile and blocked users
         profile_data = profile.to_dict()
         user_ref = db.collection('users').document(profile.id).get()
         if user_ref.exists:
@@ -281,7 +291,12 @@ def user_profile(username):
         profile = profile_ref.to_dict() if profile_ref.exists else {}
         if profile and 'interests' in profile:
             profile['interests'] = profile['interests'].split(',')  # Convert interests back to a list
-        return render_template('user_profile.html', profile=profile, user=user_data)
+
+        # Fetch feedbacks
+        feedbacks_ref = db.collection('ratings').document(user_ref[0].id).collection('user_ratings').stream()
+        feedbacks = [feedback.to_dict() for feedback in feedbacks_ref]
+
+        return render_template('user_profile.html', profile=profile, user=user_data, feedbacks=feedbacks)
     return render_template('404.html'), 404
 
 @app.route('/admin')
@@ -325,6 +340,56 @@ def admin():
         age_base64 = None
 
     return render_template('admin.html', total_users=total_users, male_count=male_count, female_count=female_count, age_distribution=age_distribution, age_base64=age_base64)
+
+@app.route('/block/<username>', methods=['POST'])
+@login_required
+def block_user(username):
+    # Get the user to be blocked
+    user_ref = db.collection('users').where('username', '==', username).get()
+    if not user_ref:
+        flash('User not found.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    blocked_user_id = user_ref[0].id
+
+    # Create a document in the block collection
+    block_ref = db.collection('block').document(current_user.id)
+    block_data = block_ref.get().to_dict() if block_ref.get().exists else {'blocked_users': []}
+
+    if blocked_user_id not in block_data['blocked_users']:
+        block_data['blocked_users'].append(blocked_user_id)
+        block_ref.set(block_data)
+        # flash('User has been blocked.', 'success')
+    else:
+        flash('User is already blocked.', 'warning')
+
+    return redirect(url_for('dashboard'))
+
+@app.route('/rate/<username>', methods=['POST'])
+@login_required
+def rate_user(username):
+    rating = request.form.get('rating')
+    feedback = request.form.get('feedback')
+
+    # Get the user to be rated
+    user_ref = db.collection('users').where('username', '==', username).get()
+    if not user_ref:
+        flash('User not found.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    rated_user_id = user_ref[0].id
+
+    # Create a document in the ratings collection
+    rating_ref = db.collection('ratings').document(rated_user_id).collection('user_ratings').document(current_user.id)
+    rating_data = {
+        'rating': int(rating),
+        'feedback': feedback,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    rating_ref.set(rating_data)
+    # flash('Rating and feedback submitted successfully.', 'success')
+
+    return redirect(url_for('user_profile', username=username))
 
 @app.errorhandler(404)
 def page_not_found(e):
