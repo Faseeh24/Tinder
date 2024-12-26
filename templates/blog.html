@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Simple Blog with Dating Features</title>
+  <style>
+
+      :root {
+          --primary: rgb(254, 48, 114);
+          --secondary: rgb(255, 255, 255);
+      }
+
+      body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f4f4f4;
+      }
+
+      header {
+          background-color: var(--primary);
+          color: white;
+          padding: 20px;
+          text-align: center;
+      }
+
+      main {
+          max-width: 800px;
+          margin: 20px auto;
+          padding: 20px;
+          background-color: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+          font-size: 2em;
+          color: white;
+      }
+
+      article h1, h2 {
+          color: var(--primary);
+      }
+
+      p {
+          font-size: 1.1em;
+          color: #555;
+          line-height: 1.6;
+      }
+
+      .dating-feature h2 {
+          color: var(--primary);
+          margin-bottom: 10px;
+      }
+
+      .dating-feature label {
+          font-size: 1em;
+          color: #555;
+          display: block;
+          margin: 10px 0 5px;
+      }
+
+      .dating-feature input, .dating-feature select, .dating-feature button {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 15px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 1em;
+      }
+
+      .dating-feature button {
+          background-color: var(--primary);
+          color: white;
+          border: none;
+          cursor: pointer;
+          transition: background-color 0.3s;
+      }
+
+      footer {
+          text-align: center;
+          padding: 10px;
+          background-color: #333;
+          color: white;
+          position: fixed;
+          width: 100%;
+          bottom: 0;
+      }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo-container">
+        <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
+    </div>
+    <div class="nav-links">
+      {% if current_user.username == "faseeh123" %}
+      <a href="{{ url_for('admin') }}">Admin</a>
+      {% endif %}
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('profile') }}">Profile</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+      <a href="/user/{{current_user.username}}">Me</a>
+      <a href="{{ url_for('search') }}">Search</a>
+      <a href="{{ url_for('blog') }}">Blog</a>
+      <a href="{{ url_for('premium') }}">Premium</a>
+  </div>
+</nav>
+
+<main>
+  <article>
+    <h1>My First Blog Post</h1>
+    <p>Welcome to my new blog! I’m excited to share my thoughts, experiences, and creative ideas with all of you. In
+      this first post, I’d like to introduce myself and talk about the purpose of this blog.</p>
+
+    <p>I’ve always enjoyed writing and sharing my insights, and this space will allow me to do just that. From tips on
+      productivity and personal development to casual musings on daily life, I hope to offer something useful for
+      everyone who reads along.</p>
+
+  </article>
+  <article>
+    <h1>
+      5 Dating Tips:
+    </h1>
+
+    <h2>
+      1. Be Authentic
+    </h2>
+    <p>
+      Present your true self. Authenticity builds trust and ensures a strong foundation for any relationship. Pretending
+      to be someone else might work short-term but leads to disappointment eventually. Share your real interests,
+      quirks, and values. Embrace your individuality; it’s what makes you attractive to the right person.
+    </p>
+
+    <h2>2. Communicate Openly</h2>
+    <p>
+      Clear and honest communication is vital in dating. Express your thoughts and feelings
+      respectfully, and be a good listener. This fosters understanding and builds a deeper connection. Avoid making
+      assumptions and address misunderstandings directly to nurture trust.
+    </p>
+    <h2>3. Take It Slow</h2>
+    <p>
+      Establish and respect personal boundaries early. Whether it’s about communication frequency,
+      physical space, or emotional sharing, clear boundaries prevent discomfort and misunderstandings. Openly discuss
+      expectations and listen to your partner’s needs.
+    </p>
+    <h2>4. Set Boundaries</h2>
+    <p>
+      Building a meaningful connection takes time. Don’t rush into defining the relationship or
+      making commitments. Enjoy getting to know the other person and let things develop naturally. Taking it slow allows
+      for a healthier bond and helps identify compatibility.
+    </p>
+    <h2>5. Have Fun and Stay Positive</h2>
+    <p>Dating should be an enjoyable experience. Focus on creating memorable moments and
+      exploring shared interests. Even if a date doesn’t work out, view it as a learning experience. Maintaining a
+      positive attitude helps you approach future opportunities with confidence.
+    </p>
+
+    <h1>
+      Thank you for coming here.
+    </h1>
+  </article>
+</main>
+
+<script>
+  document.getElementById('dating-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const name = document.getElementById('name').value;
+    alert(`Thank you, ${name}! We are finding your match.`);
+  });
+</script>
+
+</body>
+</html>

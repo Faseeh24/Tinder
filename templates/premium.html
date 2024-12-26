@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Premium</title>
+  <!-- add basic -->
+  <link rel="stylesheet" href="../static/_basic.css">
+  <style>
+      .cards_list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 2rem;
+          max-width: 120rem;
+          padding: 2rem;
+          margin-left: 17vw;
+          align-items: center;
+          align-content: center;
+          justify-content: center;
+      }
+
+      .card {
+          width: 45%;
+          background: white;
+          border: 0.2rem solid #ccc;
+          border-radius: 1rem;
+          margin-top: 5rem;
+          box-shadow: 0 0.2rem 0.4rem var(--primary);
+          display: flex;
+          flex-direction: column;
+          padding-bottom: 2rem;
+          transition: all 0.25s;
+      }
+
+      .card:hover {
+          box-shadow: 0 0.4rem 0.8rem var(--primary);
+          transform: scale(1.05);
+      }
+
+      .card p {
+          font-size: 1.6rem;
+          padding: 5rem;
+          line-height: 3rem;
+      }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo-container">
+        <img class="logo" src="../static/color-logo-tinder.png" alt="logo"/>
+    </div>
+    <div class="nav-links">
+        {% if current_user.username == "faseeh123" %}
+        <a href="{{ url_for('admin') }}">Admin</a>
+        {% endif %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="/user/{{current_user.username}}">Me</a>
+        <a href="{{ url_for('search') }}">Search</a>
+        <a href="{{ url_for('premium') }}">Premium</a>
+    </div>
+</nav>
+<!-- ADD NAV -->
+<div class="content">
+  <div class="cards_list">
+    <div class="card">
+      <p>
+        Remaining free and unattached has numerous advantages, offering a sense of independence and self-discovery. It
+        allows you to focus on personal growth, explore your interests, and pursue goals without compromise. Freedom
+        fosters self-reliance and decision-making autonomy, letting you shape your life as you envision. You can
+        allocate your time and energy to building strong friendships, advancing your career, or indulging in hobbies
+        that bring you joy. Additionally, staying free provides space to understand yourself better, preparing you for
+        healthier relationships in the future. Embracing freedom encourages living authentically and appreciating life
+        on your terms, unencumbered by obligations or expectations.
+      </p>
+      <button class="btn btn--primary">Remain Free</button>
+    </div>
+    <div class="card">
+      <p>
+      Opting for premium services offers a range of advantages, enhancing convenience, quality, and exclusivity. Premium
+      memberships often provide access to features unavailable in free versions, such as advanced tools, personalized
+      support, or ad-free experiences. They save time by offering prioritized services and faster processing, which can
+      be especially valuable for busy individuals. Premium users often enjoy enhanced customization options, allowing
+      for a tailored experience that suits their preferences. Additionally, premium plans frequently come with added
+      security measures and exclusive perks like discounts, early access, or VIP privileges. Investing in premium
+      reflects a commitment to quality and maximizing value in your experiences.
+      </p>
+      <form method="POST" action="{{ url_for('premium') }}">
+        <button type="submit" class="btn btn--primary">Get Premium</button>
+    </form>
+</div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

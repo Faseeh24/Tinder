@@ -38,6 +38,9 @@ def load_user(user_id):
     user_ref = db.collection('users').document(user_id).get()
     if user_ref.exists:
         user_data = user_ref.to_dict()
+        # Ensure is_premium field is set to False if not found
+        if 'is_premium' not in user_data:
+            user_data['is_premium'] = False
         return User(id=user_id, **user_data)
     return None
 
@@ -62,7 +65,8 @@ def register():
             db.collection('users').document(user_id).set({
                 'username': user.username,
                 'email': user.email,
-                'password_hash': user.password_hash
+                'password_hash': user.password_hash,
+                'is_premium': False  # Set default value for is_premium
             })
             send_sign_up_email(user.email)
             # flash('Account created successfully! Please log in.', 'success')
@@ -78,6 +82,9 @@ def login():
         user_ref = db.collection('users').where('email', '==', form.email.data).get()
         if user_ref:
             user_data = user_ref[0].to_dict()
+            # Ensure is_premium field is set to False if not found
+            if 'is_premium' not in user_data:
+                user_data['is_premium'] = False
             user = User(id=user_ref[0].id, **user_data)
             if user.check_password(form.password.data):
                 login_user(user)
@@ -172,6 +179,13 @@ def search():
 @app.route('/chat')
 @login_required
 def chat():
+    # Check if the user is a premium user
+    user_ref = db.collection('users').document(current_user.id).get()
+    user_data = user_ref.to_dict()
+    if not user_data.get('is_premium', False):
+        flash('You need to be a premium user to access the chat feature.', 'warning')
+        return redirect(url_for('dashboard'))
+
     # Fetch users with whom the current user has previous chats
     chats_ref = db.collection('chats').where('participants', 'array_contains', current_user.id).stream()
     chat_users = set()
@@ -188,6 +202,9 @@ def chat():
 @login_required
 def chat_with_user(username):
     user_ref = db.collection('users').where('username', '==', username).get()
+    if current_user.is_premium == False:
+        # flash('You need to be a premium user to access the chat feature.', 'warning')
+        return redirect(url_for('dashboard'))
     if len(user_ref) == 0:
         return render_template('404.html'), 404
     other_user_data = user_ref[0].to_dict()
@@ -390,6 +407,22 @@ def rate_user(username):
     # flash('Rating and feedback submitted successfully.', 'success')
 
     return redirect(url_for('user_profile', username=username))
+
+@app.route('/blog', methods=['GET'])
+def blog():
+    return render_template('blog.html')
+
+
+@app.route('/premium', methods=['GET', 'POST'])
+@login_required
+def premium():
+    if request.method == 'POST':
+        # Update the user's premium status in the database
+        user_ref = db.collection('users').document(current_user.id)
+        user_ref.update({'is_premium': True})
+        # flash('You are now a premium user!', 'success')
+        return redirect(url_for('dashboard'))
+    return render_template('premium.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
