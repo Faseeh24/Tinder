@@ -102,3 +102,59 @@ nav .logo-container .logo {
     font-size: 1.4rem;
     margin-bottom: 1rem;
 }
+
+.feedback_list {
+    width: 100%;
+    background-color: var(--secondary);
+    border-radius: 1rem;
+}
+
+.feedback_list ul {
+    text-align: left;
+    width: 85%;
+}
+
+.feedback_list li {
+    margin-top: 1rem;
+    border: 1px solid var(--primary);
+    padding: 1rem;
+    margin-bottom: 3rem;
+    border-radius: 1rem;
+    box-shadow: 4px 3px 5px 1px var(--primary);
+}
+
+.feedback_list h3, .provide_feedback h3 {
+    font-size: 3rem;
+}
+
+.provide_feedback {
+    background-color: #ffcad3;
+    font-size: 1.6rem;
+    padding: 2rem;
+}
+
+.provide_feedback label {
+    width: 20%;
+}
+
+.provide_feedback input, .provide_feedback textarea {
+    width: 60%;
+}
+
+.provide_feedback form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.provide_feedback_input {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-bottom: 2rem;
+}
+
+.provide_feedback button {
+    width: 16rem;
+    margin: 0 auto;
+}

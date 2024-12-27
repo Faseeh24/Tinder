@@ -57,6 +57,7 @@ h2 {
 .btn--primary:hover {
     color: var(--primary);
     background-color: var(--secondary);
+    border: 1px solid var(--primary);
 }
 
 .btn--secondary {

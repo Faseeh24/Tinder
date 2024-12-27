@@ -40,23 +40,27 @@
                 {% if profile.education_level %} <p><strong>Education Level:</strong> {{ profile.education_level }}</p> {% endif %}
                 {% if profile.location %} <p><strong>Location:</strong> {{ profile.location }}</p> {% endif %}
                 {% if profile.interests %} <p><strong>Interests:</strong> {{ profile.interests | join(', ') }}</p> {% endif %}
+
+              <div class="feedback_list">
                 <h3>Feedbacks</h3>
                 {% if feedbacks %}
-                    <ul>
-                        {% for feedback in feedbacks %}
-                            <li>
-                                <p><strong>Rating:</strong> {{ feedback.rating }}</p>
-                                <p><strong>Feedback:</strong> {{ feedback.feedback }}</p>
-                                <p><strong>Date:</strong> {{ feedback.timestamp }}</p>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                  <ul>
+                    {% for feedback in feedbacks %}
+                      <li>
+                        <p><strong>Rating:</strong> {{ feedback.rating }}</p>
+                        <p><strong>Feedback:</strong> {{ feedback.feedback }}</p>
+                        <p><strong>Date:</strong> {{ feedback.timestamp }}</p>
+                      </li>
+                    {% endfor %}
+                  </ul>
                 {% else %}
-                    <p>No feedbacks available.</p>
+                  <p>No feedbacks available.</p>
                 {% endif %}
-                {% else %}
+              {% else %}
                 <p>This user has not set up a profile yet.</p>
-            {% endif %}
+              {% endif %}
+
+              </div>
         </div>
         <div class="right-content">
             <div class="image-container">
@@ -68,15 +72,22 @@
             <form method="POST" action="{{ url_for('block_user', username=user.username) }}">
                 <button type="submit" class="btn btn--secondary">Block</button>
             </form>
-            <h3>Rate and Provide Feedback</h3>
-            <form method="POST" action="{{ url_for('rate_user', username=user.username) }}">
-                <label for="rating">Rating (1-5):</label>
-                <input type="number" id="rating" name="rating" min="1" max="5" required>
-                <label for="feedback">Feedback:</label>
-                <textarea id="feedback" name="feedback" rows="4" required></textarea>
-                <button type="submit" class="btn btn--primary">Submit</button>
-            </form>
-           
+
+            <div class="provide_feedback">
+                <h3>Rate and Provide Feedback</h3>
+                <form method="POST" action="{{ url_for('rate_user', username=user.username) }}">
+                  <div class="provide_feedback_input">
+                    <label for="rating">Rating (1-5):</label>
+                    <input type="number" id="rating" name="rating" min="1" max="5" required>
+                  </div>
+                  <div class="provide_feedback_input">
+                    <label for="feedback">Feedback:</label>
+                    <textarea id="feedback" name="feedback" rows="4" required></textarea>
+                  </div>
+                  <button type="submit" class="btn btn--primary">Submit</button>
+                </form>
+            </div>
+
         </div>
     </div>
 </section>
