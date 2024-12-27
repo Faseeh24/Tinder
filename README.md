@@ -1,4 +1,4 @@
-![Screenshot 2024-12-27 222428](https://github.com/user-attachments/assets/380b094c-43a9-4a56-bdd7-1963dfefe8a8)# Tinder Clone - Match Making App
+# Tinder Clone - Match Making App
 
 This project is a Tinder clone, a match-making application built using Flask, Firebase, and various other technologies. It includes features such as user registration, login, profile management, chat functionality, and a premium subscription service.
 
