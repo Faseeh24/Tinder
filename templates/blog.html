@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='_basic.css') }}">
   <title>My Simple Blog with Dating Features</title>
   <style>
 
@@ -12,30 +13,27 @@
       }
 
       body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 0;
           background-color: #f4f4f4;
       }
 
       header {
           background-color: var(--primary);
           color: white;
-          padding: 20px;
+          padding: 2rem;
           text-align: center;
       }
 
       main {
-          max-width: 800px;
-          margin: 20px auto;
-          padding: 20px;
+          max-width: 100rem;
+          margin: 6rem auto;
+          padding: 2rem;
           background-color: white;
           border-radius: 8px;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
       h1 {
-          font-size: 2em;
+          font-size: 5rem;
           color: white;
       }
 
@@ -44,14 +42,15 @@
       }
 
       p {
-          font-size: 1.1em;
+          font-size: 1.6rem;
           color: #555;
           line-height: 1.6;
       }
 
-      .dating-feature h2 {
+      h2 {
           color: var(--primary);
           margin-bottom: 10px;
+          font-size: 3rem;
       }
 
       .dating-feature label {

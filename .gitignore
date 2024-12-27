@@ -3,3 +3,12 @@ KEYS/
 __pycache__/
 tanzeel/
 static/profile_photos/
+.idea
+bin
+include
+lib
+lib64
+share
+pyvenv.cfg
+Gmail SMTP API.json
+GoogleCloudFireStoreAPI.json
