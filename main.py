@@ -6,19 +6,19 @@ from forms import RegistrationForm, LoginForm, ProfileForm
 from firebase_admin import credentials, firestore
 from matching import calculate_similarity
 from gmail_smtp import send_sign_up_email
+import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 from datetime import datetime
 from models import User
 from PIL import Image
 import firebase_admin
-import os
 import pandas as pd
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')  # Use the Agg backend for matplotlib
-import matplotlib.pyplot as plt
-import io
+matplotlib.use('Agg')
 import base64
+import os
+import io
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -434,3 +434,4 @@ def internal_server_error(e):
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
+

@@ -7,6 +7,11 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+
+load_dotenv()
+SMTP_CREDENTIALS = os.getenv('path_to_smtp_key')
+USER_EMAIL = os.getenv('user_email')
 
 # If modifying these SCOPES, delete the file tokens_smtp.json.
 SCOPES = ['https://www.googleapis.com/auth/gmail.send']
@@ -25,7 +30,7 @@ def authenticate_gmail():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                './KEYS/Gmail SMTP API.json', SCOPES)  # Path to your credentials.json file
+                SMTP_CREDENTIALS, SCOPES)  # Path to your credentials.json file
             creds = flow.run_local_server(port=0)
         
         # Save the credentials for the next run
@@ -65,7 +70,7 @@ def send_sign_up_email(email):
     service = authenticate_gmail()
     
     # Email details
-    sender = 'faseehurrehman241@gmail.com' 
+    sender = USER_EMAIL  # write your own email address
     to = email
     subject = 'Welcome to Tinder! 🎉'
     body = 'Hi there! Welcome to Tinder, The ultimate match-making platform. We are excited to have you on board. 🚀\n\n Happy Matching! 😊'
